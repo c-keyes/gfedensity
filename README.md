@@ -1,7 +1,7 @@
 # gfedensity
 
 ## Authors
-Christopher Keyes
+Christopher Keyes, Andrew Kobin
 
 ## Description
 Code repository for computations related to the paper "On p-adic solubility of Ax^l + By^m + Cz^n = 0" by Christopher Keyes and Andrew Kobin
