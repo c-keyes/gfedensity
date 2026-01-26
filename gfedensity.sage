@@ -6,8 +6,8 @@
 # See paper "***TITLE***" by Christopher Keyes and Andrew Kobin
 # ***URL***
 #
-# Author: Christopher Keyes
-# Updated: 29 December 2025
+# Authors: Christopher Keyes, Andrew Kobin
+# Updated: 26 January 2026
 
 # Set variables
 var('p')             # p stands in for a prime
@@ -280,7 +280,7 @@ def rho0_xyz(l,m,n,p):
     assert mod(gcd(l,m),p) != 0 and mod(gcd(l,n),p) != 0 and mod(gcd(m,n),p) != 0
     
     F = FiniteField(p)
-    Fnz = [a for a in F if a.is_unit()] # nonzeor elements of F
+    Fnz = [a for a in F if a.is_unit()] # nonzero elements of F
     
     # initialize counts
     ct = 0
