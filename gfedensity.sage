@@ -178,7 +178,7 @@ def get_probs(l,m,n,return_all = false):
 # validity_range
 #     returns the last prime (not dividing l,m,n) for which the rational function expressions
 #     does NOT (necessarily) compute the p-adic probability. This is computed via Theorem 1.1
-#     (and Lemmas 2.5, 3.6), and can be improved in many situation.
+#     (and Lemmas 2.8, 3.6), and can be improved in many situation.
 # INPUTS:
 #     * l,m,n: positive integer exponents
 # OUTPUTS
