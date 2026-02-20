@@ -3,11 +3,11 @@
 # Functions for computing the probability that Ax^l + By^m + Cz^n = 0
 # has a primitive p-adic solution.
 #
-# See paper "***TITLE***" by Christopher Keyes and Andrew Kobin
+# See paper "On p-adic solubility of Ax^l + By^m + Cz^n = 0" by Christopher Keyes and Andrew Kobin
 # ***URL***
 #
 # Authors: Christopher Keyes, Andrew Kobin
-# Updated: 26 January 2026
+# Updated: 20 February 2026
 
 # Set variables
 var('p')             # p stands in for a prime
