@@ -4,10 +4,9 @@
 # has a primitive p-adic solution.
 #
 # See paper "On p-adic solubility of Ax^l + By^m + Cz^n = 0" by Christopher Keyes and Andrew Kobin
-# ***URL***
 #
 # Authors: Christopher Keyes, Andrew Kobin
-# Updated: 20 February 2026
+# Updated: 25 February 2026
 
 # Set variables
 var('p')             # p stands in for a prime
@@ -175,31 +174,41 @@ def get_probs(l,m,n,return_all = false):
     
     return r, rA, rB, rC, rAB, rAC, rBC
 
-# validity_range
-#     returns the last prime (not dividing l,m,n) for which the rational function expressions
-#     does NOT (necessarily) compute the p-adic probability. This is computed via Theorem 1.1
-#     (and Lemmas 2.8, 3.6), and can be improved in many situation.
+# validity_range_ijk
+#     returns the last prime power (excluding those dividing any two of l,m,n) for which 
+#     the rational function expression R_i,j,k(t) does NOT (necessarily) compute the p-adic probability.
+#     This is computed via Theorem 1.2 (and Lemmas 2.8, 3.6), and can be improved in certain situations.
 # INPUTS:
 #     * l,m,n: positive integer exponents
+#     * i,j,k: values of gcd(p-1,glm), gcd(p-1,gln), gcd(p-1,gmn)
 # OUTPUTS
-#     * last_prime: the last prime (not dividing l,m,n) for which the result is not guaranteed
-def validity_range(l,m,n):
-    g = gcd(gcd(l,m),n)
+#     * last_q: the last prime power for which the result is not guaranteed
+def validity_range_ijk(l,m,n,i,j,k):
+    assert (i,j,k) in possible_gcds(l,m,n)
     
-    if g == 1:
-        return 2
-    elif g == 2:
-        return 5
+    glm = gcd(l,m)
+    gln = gcd(l,n)
+    gmn = gcd(m,n)
+    L = lcm(l,lcm(m,n))
+    
+    genus = 1 + ((l*m*n)/L - (glm+gln+gmn))/2
+    
+    if genus == 0:
+        last_q = 1
+        for n in [1 .. max(i,j,k)-1]:
+            if n.is_prime_power() and i == gcd(n-1,glm) and j == gcd(n-1,gln) and k == gcd(n-1,gmn):
+                last_q = n
+        
+        return last_q
     
     stop_search = false
     n = 1
-    bd_old = n + 1 - (g-2)*(g-1)/2*floor(2*sqrt(n)) - 3*g
-    last_prime = 1
+    bd_old = n + 1 - genus*floor(2*sqrt(n)) - max(i,j,k)
+    last_q = n
     
-    # increment n until this bound drops, but is still positive
     while not stop_search:
         n = n+1
-        bd_new = n + 1 - (g-2)*(g-1)/2*floor(2*sqrt(n)) - 3*g
+        bd_new = n + 1 - genus*floor(2*sqrt(n)) - max(i,j,k)
         # printing for debugging
 #         print(n,bd_new)
         
@@ -209,26 +218,34 @@ def validity_range(l,m,n):
         
         # bound is nonpositive
         else:
-            # if n prime, record actual bound (incorporating gcd) and update last_prime if nonpositive
-            if n.is_prime():
-                bd_actual = n+1 - (g-2)*(g-1)/2*floor(2*sqrt(n)) - 3*gcd(n-1,g)
-                if bd_actual <= 0:
-                    last_prime = n
+            # if n prime power, check gcds and update last_q
+            if n.is_prime_power() and i == gcd(n-1,glm) and j == gcd(n-1,gln) and k == gcd(n-1,gmn):
+                last_q = n
                 
         bd_old = bd_new
         
-    return last_prime
+    return last_q
+        
+
+# validity_range
+#     compute validity range for all possible (i,j,k) and return maximum
+# INPUTS:
+#     * l,m,n: positive integer exponents
+# OUTPUTS
+#     * largest prime power for which inequality in Theorem 1.2 is not satisfied.
+def validity_range(l,m,n):    
+    return max([validity_range_ijk(l,m,n,i,j,k) for (i,j,k) in possible_gcds(l,m,n)])
 
 # validity_range_diagonal
 #     returns the last prime (not dividing n) for which the rational function expressions
 #     do NOT (necessarily) compute the p-adic probability when (l,m,n) = (n,n,n). This 
-#     takes advantage of improvements to Theorem 1.1 in the diagonal case.
+#     takes advantage of improvements to Theorem 1.2 in the diagonal case.
 # INPUTS:
 #     * n: positive integer exponent
 # OUTPUTS
 #     * last_prime: the last prime (not dividing n) for which the result is not guaranteed
 def validity_range_diagonal(n):
-    # if p is big enough, Hirakawa--Kanamura (remark 2.4) show validity 
+    # if p is big enough, Hirakawa--Kanamura (Remark 2.4) show validity 
     plist = [p for p in [2 .. (n-1)^2*(n-2)^2] if p.is_prime() and mod(n,p) != 0]    
     
     # initialize
